@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+BUILD_DIR="/home/defey/bernel/op8"
+TEMPLATE_DIR="$BUILD_DIR/AK3_template"
+OUTPUT_DIR="$BUILD_DIR/AK3_output"
+IMAGE="$BUILD_DIR/out/arch/arm64/boot/Image"
+rm -rf "$OUTPUT_DIR"
+cp -r "$TEMPLATE_DIR" "$OUTPUT_DIR"
+cp "$IMAGE" "$OUTPUT_DIR/Image"
+cd "$OUTPUT_DIR"
+ZIPNAME="op8pro-kernel-$(date +%Y%m%d-%H%M%S).zip"
+rm -f "../$ZIPNAME"
+zip -r9 "../$ZIPNAME" . -x ".git/*"
+echo "Packaged: $BUILD_DIR/$ZIPNAME"
+unzip -l "../$ZIPNAME"
