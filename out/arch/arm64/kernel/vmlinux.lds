@@ -100,7 +100,7 @@ SECTIONS
    . = ALIGN(8); __irqentry_text_start = .; *(.irqentry.text) __irqentry_text_end = .;
    . = ALIGN(8); __softirqentry_text_start = .; *(.softirqentry.text) __softirqentry_text_end = .;
    . = ALIGN(8); __entry_text_start = .; *(.entry.text) __entry_text_end = .;
-   . = ALIGN(8); *(.text.hot .text.hot.*) *(.text .text.fixup) *(.text.unlikely .text.unlikely.*) *(.text.unknown .text.unknown.*) *(.text.cfi) . = ALIGN(8); __noinstr_text_start = .; *(.noinstr.text) __noinstr_text_end = .; *(.text..refcount) *(.text..ftrace) *(.ref.text) *(.text.asan.* .text.tsan.*)
+   . = ALIGN(8); *(.text.hot .text.hot.*) *(.text .text.[0-9a-zA-Z_]* .text.fixup) *(.text.unlikely .text.unlikely.*) *(.text.unknown .text.unknown.*) *(.text.[0-9a-zA-Z_]*.cfi) . = ALIGN(8); __noinstr_text_start = .; *(.noinstr.text) __noinstr_text_end = .; *(.text..refcount) *(.text..ftrace) *(.ref.text) *(.text.asan.* .text.tsan.*)
    . = ALIGN(8); __sched_text_start = .; *(.sched.text) __sched_text_end = .;
    . = ALIGN(8); __cpuidle_text_start = .; *(.cpuidle.text) __cpuidle_text_end = .;
    . = ALIGN(8); __lock_text_start = .; *(.spinlock.text) __lock_text_end = .;
@@ -166,13 +166,23 @@ SECTIONS
 
  __rela_offset = ABSOLUTE(ADDR(.rela.dyn) - ((((((((0xffffffffffffffff)) - (((1)) << (39)) + 1) + (0)) + (0x08000000))) + (0x08000000))));
  __rela_size = SIZEOF(.rela.dyn);
+
+
+ .relr.dyn : ALIGN(8) {
+  *(.relr.dyn)
+ }
+
+ __relr_offset = ABSOLUTE(ADDR(.relr.dyn) - ((((((((0xffffffffffffffff)) - (((1)) << (39)) + 1) + (0)) + (0x08000000))) + (0x08000000))));
+ __relr_size = SIZEOF(.relr.dyn);
+
+
  . = ALIGN(0x00200000);
  __initdata_end = .;
  __init_end = .;
 
  _data = .;
  _sdata = .;
- . = ALIGN((1 << 12)); .data : AT(ADDR(.data) - 0) { . = ALIGN((2 * (((1)) << (14 + 0)))); __start_init_task = .; init_thread_union = .; init_stack = .; KEEP(*(.data..init_task)) KEEP(*(.data..init_thread_info)) . = __start_init_task + (((1)) << (14 + 0)); __end_init_task = .; . = ALIGN((1 << 12)); __nosave_begin = .; *(.data..nosave) . = ALIGN((1 << 12)); __nosave_end = .; . = ALIGN((1 << 12)); *(.data..page_aligned) . = ALIGN((1 << 12)); . = ALIGN((1 << (6))); *(.data..cacheline_aligned) . = ALIGN((1 << (6))); *(.data..read_mostly) . = ALIGN((1 << (6))); *(.xiptext) *(.data) *(.data..decrypted) *(.ref.data) *(.data..shared_aligned) *(.data.unlikely) __start_once = .; *(.data.once) __end_once = .; . = ALIGN(32); *(__tracepoints) . = ALIGN(8); __start___jump_table = .; KEEP(*(__jump_table)) __stop___jump_table = .; . = ALIGN(8); __start___verbose = .; KEEP(*(__verbose)) __stop___verbose = .; __start___trace_bprintk_fmt = .; KEEP(*(__trace_printk_fmt)) __stop___trace_bprintk_fmt = .; __start___tracepoint_str = .; KEEP(*(__tracepoint_str)) __stop___tracepoint_str = .; CONSTRUCTORS } . = ALIGN(8); __bug_table : AT(ADDR(__bug_table) - 0) { __start___bug_table = .; KEEP(*(__bug_table)) __stop___bug_table = .; }
+ . = ALIGN((1 << 12)); .data : AT(ADDR(.data) - 0) { . = ALIGN((2 * (((1)) << (14 + 0)))); __start_init_task = .; init_thread_union = .; init_stack = .; KEEP(*(.data..init_task)) KEEP(*(.data..init_thread_info)) . = __start_init_task + (((1)) << (14 + 0)); __end_init_task = .; . = ALIGN((1 << 12)); __nosave_begin = .; *(.data..nosave) . = ALIGN((1 << 12)); __nosave_end = .; . = ALIGN((1 << 12)); *(.data..page_aligned) . = ALIGN((1 << 12)); . = ALIGN((1 << (6))); *(.data..cacheline_aligned) . = ALIGN((1 << (6))); *(.data..read_mostly) . = ALIGN((1 << (6))); *(.xiptext) *(.data .data.[0-9a-zA-Z_]* .data..L* .data..compoundliteral*) *(.data..decrypted) *(.ref.data) *(.data..shared_aligned) *(.data.unlikely) __start_once = .; *(.data.once) __end_once = .; . = ALIGN(32); *(__tracepoints) . = ALIGN(8); __start___jump_table = .; KEEP(*(__jump_table)) __stop___jump_table = .; . = ALIGN(8); __start___verbose = .; KEEP(*(__verbose)) __stop___verbose = .; __start___trace_bprintk_fmt = .; KEEP(*(__trace_printk_fmt)) __stop___trace_bprintk_fmt = .; __start___tracepoint_str = .; KEEP(*(__tracepoint_str)) __stop___tracepoint_str = .; CONSTRUCTORS } . = ALIGN(8); __bug_table : AT(ADDR(__bug_table) - 0) { __start___bug_table = .; KEEP(*(__bug_table)) __stop___bug_table = .; }
  .mmuoff.data.write : ALIGN(0x00000800) {
   __mmuoff_data_start = .;
   *(.mmuoff.data.write)
@@ -187,7 +197,7 @@ SECTIONS
  __pecoff_data_rawsize = ABSOLUTE(. - __initdata_begin);
  _edata = .;
 
- . = ALIGN(0); __bss_start = .; . = ALIGN(0); .sbss : AT(ADDR(.sbss) - 0) { *(.dynsbss) *(.sbss) *(.scommon) } . = ALIGN(0); .bss : AT(ADDR(.bss) - 0) { . = ALIGN((1 << 12)); *(.bss..page_aligned) . = ALIGN((1 << 12)); *(.dynbss) *(.bss) *(COMMON) } . = ALIGN(0); __bss_stop = .;
+ . = ALIGN(0); __bss_start = .; . = ALIGN(0); .sbss : AT(ADDR(.sbss) - 0) { *(.dynsbss) *(.sbss .sbss.[0-9a-zA-Z_]*) *(.scommon) } . = ALIGN(0); .bss : AT(ADDR(.bss) - 0) { . = ALIGN((1 << 12)); *(.bss..page_aligned) . = ALIGN((1 << 12)); *(.dynbss) *(.bss .bss.[0-9a-zA-Z_]* .bss..compoundliteral*) *(COMMON) } . = ALIGN(0); __bss_stop = .;
 
  . = ALIGN((1 << 12));
  idmap_pg_dir = .;

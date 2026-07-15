@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+exec > >(tee -i build.log)
+exec 2>&1
 
 echo "[+] Checking for orphan build processes..."
 pkill -f "make.*blu_spark|clang.*O=out" || true
@@ -19,9 +21,9 @@ export OBJDUMP=llvm-objdump
 export STRIP=llvm-strip
 
 echo "[+] Re-syncing defconfig..."
-make O=out ARCH=$ARCH CC=$CC CROSS_COMPILE=$CROSS_COMPILE CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 blu_spark_defconfig
+make O=out ARCH=$ARCH CC=$CC CROSS_COMPILE=$CROSS_COMPILE CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 LD=$LD AR=$AR NM=$NM OBJCOPY=$OBJCOPY OBJDUMP=$OBJDUMP STRIP=$STRIP blu_spark_defconfig
 
-make O=out ARCH=$ARCH CC=$CC CROSS_COMPILE=$CROSS_COMPILE CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 olddefconfig
+make O=out ARCH=$ARCH CC=$CC CROSS_COMPILE=$CROSS_COMPILE CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 LD=$LD AR=$AR NM=$NM OBJCOPY=$OBJCOPY OBJDUMP=$OBJDUMP STRIP=$STRIP olddefconfig
 
 echo "[+] Compiling kernel..."
 make -j$(nproc) O=out ARCH=$ARCH CC=$CC CROSS_COMPILE=$CROSS_COMPILE CROSS_COMPILE_ARM32=$CROSS_COMPILE_ARM32 LD=$LD AR=$AR NM=$NM OBJCOPY=$OBJCOPY OBJDUMP=$OBJDUMP STRIP=$STRIP
