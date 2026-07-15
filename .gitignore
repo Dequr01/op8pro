@@ -141,3 +141,5 @@ kernel/configs/android-*.cfg
 Android.bp
 AK3_template/
 AK3_output/
+AK3_template/
+AK3_output/
