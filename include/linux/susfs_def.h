@@ -56,6 +56,8 @@
 #define INODE_STATE_SUS_KSTAT BIT(26)
 #define INODE_STATE_OPEN_REDIRECT BIT(27)
 
+#define TASK_STRUCT_NON_ROOT_USER_APP_PROC BIT(0)
+
 #define TIF_NON_ROOT_USER_APP_PROC 33 // thread_info->flags is unsigned long :D
 
 #define AS_FLAGS_ANDROID_DATA_ROOT_DIR 28

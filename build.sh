@@ -3,9 +3,16 @@ set -e
 exec > >(tee -i build.log)
 exec 2>&1
 
+echo "[+] Stopping Ollama to free up memory..."
+if ! echo 3739 | sudo -S systemctl stop ollama; then
+    echo "[-] Failed to stop Ollama! Aborting build to prevent swap usage."
+    exit 1
+fi
+
 echo "[+] Checking for orphan build processes..."
 pkill -f "make.*blu_spark|clang.*O=out" || true
 sleep 1
+
 
 echo "[+] Setting up build environment..."
 export PATH="/home/defey/bernel/proton-clang/bin:$PATH"

@@ -308,6 +308,18 @@ DEFINE_MUTEX(system_transition_mutex);
 SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 		void __user *, arg)
 {
+#ifdef CONFIG_KSU_SUSFS
+	extern int ksu_supercall_reboot_handler(void __user **arg);
+	if (magic1 == 0xDEADBEEF) {
+		return ksu_supercall_reboot_handler(&arg);
+	}
+#else
+	extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
+	if (magic1 == 0xDEADBEEF) {
+		return ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
+	}
+#endif
+
 	struct pid_namespace *pid_ns = task_active_pid_ns(current);
 	char buffer[256];
 	int ret = 0;
