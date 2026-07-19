@@ -141,5 +141,10 @@ kernel/configs/android-*.cfg
 Android.bp
 AK3_template/
 AK3_output/
-AK3_template/
-AK3_output/
+/out/
+*.apk
+*.zip
+build.log
+mappings/
+modem-power-control-module/
+sucompat.c
