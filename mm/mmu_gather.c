@@ -130,6 +130,16 @@ static void tlb_remove_table_one(void *table)
 	__tlb_remove_table(table);
 }
 
+void tlb_remove_table_sync_one(void)
+{
+	/*
+	 * This is called when we need to ensure all hardware page-table walkers
+	 * have completed before we free a page table. On arm64 with THP we call
+	 * this from khugepaged when collapsing PMD page tables.
+	 */
+	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
+}
+
 static void tlb_remove_table_rcu(struct rcu_head *head)
 {
 	struct mmu_table_batch *batch;
