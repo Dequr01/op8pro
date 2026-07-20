@@ -24,7 +24,7 @@
 #include "internal.h"
 
 /* gross hack for <=4.19 stable */
-#if defined(CONFIG_S390) || defined(CONFIG_ARM)
+#if defined(CONFIG_S390) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
 static void tlb_remove_table_smp_sync(void *arg)
 {
         /* Simply deliver the interrupt */
