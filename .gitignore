@@ -148,3 +148,6 @@ build.log
 mappings/
 modem-power-control-module/
 sucompat.c
+*.patch
+*.diff
+*-diff.txt
