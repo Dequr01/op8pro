@@ -55,10 +55,10 @@ if [ -f /sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs ]; t
     echo 10000 > /sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs
 fi
 
-# --- 7. Scheduler: Restore default Android latency targets ---
+# --- 7. Scheduler: Restore sched_boost and energy_aware defaults ---
 echo "$TAG Restoring scheduler defaults..."
-echo 10000000 > /proc/sys/kernel/sched_latency_ns         # Default 10ms
-echo 1250000  > /proc/sys/kernel/sched_min_granularity_ns # Default 1.25ms
+echo 0 > /proc/sys/kernel/sched_boost
+echo 1 > /proc/sys/kernel/sched_energy_aware
 
 # --- 8. IO Scheduler: Restore to zen (balanced default from boot script) ---
 echo "$TAG Restoring IO scheduler to zen..."

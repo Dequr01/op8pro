@@ -57,10 +57,10 @@ if [ -f /sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs ]; t
     echo 100 > /sys/kernel/mm/transparent_hugepage/khugepaged/scan_sleep_millisecs
 fi
 
-# --- 7. Scheduler: Reduce latency for faster thread wakeups ---
-echo "$TAG Tightening scheduler latency..."
-echo 2000000 > /proc/sys/kernel/sched_latency_ns         # 2ms (default: 10ms)
-echo 500000  > /proc/sys/kernel/sched_min_granularity_ns # 0.5ms slices
+# --- 7. Scheduler: Enable sched_boost and disable energy_aware (EAS) for maximum throughput ---
+echo "$TAG Boosting scheduler task placement..."
+echo 1 > /proc/sys/kernel/sched_boost
+echo 0 > /proc/sys/kernel/sched_energy_aware
 
 # --- 8. IO Scheduler: deadline for low-latency model file reads ---
 echo "$TAG Setting IO scheduler to deadline..."
