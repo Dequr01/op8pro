@@ -23,18 +23,7 @@
 #include <asm/pgalloc.h>
 #include "internal.h"
 
-/* gross hack for <=4.19 stable */
-#if defined(CONFIG_S390) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-static void tlb_remove_table_smp_sync(void *arg)
-{
-        /* Simply deliver the interrupt */
-}
 
-static void tlb_remove_table_sync_one(void)
-{
-        smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
-}
-#endif
 
 enum scan_result {
 	SCAN_FAIL,
@@ -1281,6 +1270,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
 	struct mm_struct *mm;
 	unsigned long addr;
 	pmd_t *pmd, _pmd;
+	struct mmu_notifier_range range;
 
 	i_mmap_lock_write(mapping);
 	vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
@@ -1319,7 +1309,6 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
 					up_write(&mm->mmap_sem);
 					continue;
 				}
-				struct mmu_notifier_range range;
 				mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm, addr, end);
 				mmu_notifier_invalidate_range_start(&range);
 				ptl = pmd_lock(mm, pmd);
